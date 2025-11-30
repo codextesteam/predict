@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // src/lib/utils.ts
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
@@ -32,4 +33,11 @@ export class ApiResponse<T = any> {
       message: this.message
     }
   }
+=======
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+>>>>>>> 1e5c006f943506b1b2f64c0081ac5b89185c16ec
 }
