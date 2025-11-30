@@ -1,0 +1,79 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  name              String?
+  subscriptionStatus SubscriptionStatus @default(INACTIVE)
+  predictions       Prediction[]
+  subscriptions     Subscription[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@map("users")
+}
+
+model Match {
+  id          String   @id
+  homeTeam    String
+  awayTeam    String
+  date        DateTime
+  status      String
+  score       String?
+  league      String
+  leagueId    Int
+  country     String
+  predictions Prediction[]
+  createdAt   DateTime @default(now())
+
+  @@map("matches")
+}
+
+model Prediction {
+  id             String   @id @default(cuid())
+  match          Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  matchId        String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  predictionType String
+  predictionData Json
+  confidenceScore Float?
+  isCorrect      Boolean?
+  createdAt      DateTime @default(now())
+
+  @@map("predictions")
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  plan      PlanType
+  status    SubscriptionStatus
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+
+  @@map("subscriptions")
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELED
+  PAST_DUE
+}
+
+enum PlanType {
+  BASIC
+  PREMIUM
+}
